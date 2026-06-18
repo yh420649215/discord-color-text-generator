@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discord Colored Text Generator — Free ANSI Color Markdown Tool</title>
+<meta name="description" content="Free Discord colored text generator with WYSIWYG editor. Create ANSI colored messages with 8 foreground colors, 8 background colors, bold and underline. Type in color, copy ANSI markdown for Discord. No sign-up required.">
+<meta name="keywords" content="discord colored text, discord ansi colors, discord text generator, ansi escape codes discord, discord markdown colors, colored text discord, discord color message, ansi color code generator">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://discordcoloredtext.com/">
+<meta property="og:title" content="Discord Colored Text Generator — Free ANSI Color Markdown Tool">
+<meta property="og:description" content="Type in color with the WYSIWYG editor. 8 foreground colors, 8 background colors, bold, underline. Copy ANSI markdown for Discord instantly. Free, no sign-up.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://discordcoloredtext.com/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Discord Colored Text Generator">
+<meta name="twitter:description" content="WYSIWYG editor for Discord ANSI colored text. Type in color, copy markdown. Free.">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1A1A2E;--surface:#222240;--card:#252545;--border:#2D2D4A;
+  --accent:#5865F2;--accent-hover:#4752C4;--glow:#5865F230;
+  --success:#57F287;--text:#F2F3F5;--muted:#949BA4;
+  --editor-bg:#313338;--editor-text:#DBDEE1;
+  --font:'gg sans','Whitney','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ui:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
+.container{max-width:780px;margin:0 auto;padding:28px 20px 40px}
+
+/* Header */
+.header{text-align:center;padding:40px 0 28px}
+.header h1{font-size:clamp(1.4rem,3.5vw,2rem);font-weight:800;background:linear-gradient(135deg,var(--accent),#00E5FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;letter-spacing:-0.01em}
+.header p{color:var(--muted);font-size:0.9rem}
+
+.ad{background:var(--card);border:1px dashed var(--border);border-radius:12px;min-height:90px;display:flex;align-items:center;justify-content:center;color:#4A4A6A;font-size:0.75rem;margin:12px 0;text-transform:uppercase;letter-spacing:0.1em}
+
+/* Editor */
+.editor-section{margin:28px 0}
+.editor-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.editor-top label{font-weight:700;font-size:0.88rem;color:var(--text);letter-spacing:-0.01em}
+.editor-actions{display:flex;gap:6px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:7px 15px;font-size:0.78rem;font-weight:600;font-family:var(--ui);border:none;border-radius:8px;cursor:pointer;transition:all 0.15s ease}
+.btn-fill{background:var(--accent);color:#fff}
+.btn-fill:hover{background:var(--accent-hover);box-shadow:0 2px 12px var(--glow)}
+.btn-fill.copied{background:var(--success);color:#000;pointer-events:none}
+.btn-hollow{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-hollow:hover{background:var(--card);color:var(--text)}
+.btn-hollow.danger:hover{color:#ED4245;border-color:#ED424530}
+
+.editor{
+  width:100%;padding:18px 20px;font-size:0.93rem;font-family:var(--font);
+  background:var(--editor-bg);border:2px solid var(--border);border-radius:12px;
+  color:var(--editor-text);outline:none;transition:border-color 0.2s,box-shadow 0.2s;
+  min-height:110px;line-height:1.55;word-break:break-word;overflow-y:auto;
+  box-shadow:0 4px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.02);
+}
+.editor:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow),0 4px 24px rgba(0,0,0,0.4)}
+.editor:empty::before{content:attr(data-placeholder);color:var(--muted);font-style:italic;pointer-events:none}
+.editor-wrap{position:relative}
+.editor-wrap .char-count{position:absolute;bottom:8px;right:14px;z-index:1;pointer-events:none}
+
+/* Picker */
+.picker{display:flex;flex-direction:column;gap:18px;margin:28px 0}
+.picker-label{font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px}
+.picker-row{display:flex;flex-wrap:wrap;gap:6px}
+
+/* FG swatches: colored circles */
+.swatch-btn{
+  width:35px;height:35px;border-radius:50%;border:2.5px solid transparent;
+  cursor:pointer;outline:none;transition:all 0.12s ease;position:relative;flex-shrink:0;
+}
+.swatch-btn:hover{transform:scale(1.15);border-color:rgba(255,255,255,0.3);z-index:1}
+.swatch-btn:active{transform:scale(0.92)}
+
+/* BG swatches: rounded squares */
+.bg-swatch{
+  width:35px;height:35px;border-radius:7px;border:2px solid rgba(255,255,255,0.08);
+  cursor:pointer;outline:none;transition:all 0.12s ease;position:relative;flex-shrink:0;
+}
+.bg-swatch:hover{transform:scale(1.15);border-color:rgba(255,255,255,0.35);z-index:1}
+.bg-swatch:active{transform:scale(0.92)}
+
+/* Style toggles */
+.style-btn{
+  display:inline-flex;align-items:center;gap:5px;padding:8px 18px;
+  font-size:0.8rem;font-weight:600;font-family:var(--ui);border-radius:8px;
+  cursor:pointer;user-select:none;outline:none;transition:all 0.12s ease;
+  background:var(--card);border:1.5px solid var(--border);color:var(--muted);
+}
+.style-btn:hover{background:#282845;border-color:#3D3D65;color:var(--text)}
+.style-btn:active{transform:scale(0.96)}
+.style-btn .icon{font-size:0.9rem}
+
+/* Sequence bar */
+.seq-bar{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;min-height:44px;margin-top:8px}
+.seq-blocks{flex:1;display:flex;flex-wrap:wrap;gap:3px;align-items:center;min-height:28px}
+.seq-empty{color:var(--muted);font-size:0.78rem;font-style:italic}
+.seq-dot{width:20px;height:20px;border-radius:4px;flex-shrink:0;transition:transform 0.1s;cursor:pointer}
+.seq-dot:hover{transform:scale(1.25)}
+.seq-actions{display:flex;gap:5px;flex-shrink:0}
+/* Sequence-only color buttons */
+.seq-swatch{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;outline:none;transition:all 0.12s ease;flex-shrink:0}
+.seq-swatch:hover{transform:scale(1.2);border-color:rgba(255,255,255,0.4);z-index:1}
+.seq-swatch:active{transform:scale(0.9)}
+
+/* Presets */
+.presets{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.preset-btn{font-size:0.7rem;font-weight:600;padding:4px 10px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--ui);transition:all 0.12s ease}
+.preset-btn:hover{background:var(--card);color:var(--text);border-color:var(--accent)}
+
+/* Char counter */
+.char-count{font-size:0.72rem;color:var(--muted);font-weight:500}
+.char-count.warn{color:#FEE75C}
+.char-count.danger{color:#ED4245}
+
+/* SEO */
+.seo{margin-top:48px;padding-top:28px;border-top:1px solid var(--border)}
+.seo h2{font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:14px}
+.seo h3{font-size:0.95rem;font-weight:600;color:var(--text);margin:18px 0 6px}
+.seo p,.seo li{font-size:0.85rem;color:#B0B0C0;line-height:1.7;margin-bottom:8px}
+.seo code{background:#0D0D1A;padding:1px 6px;border-radius:3px;font-family:'SF Mono','Fira Code',monospace;font-size:0.78rem;color:#00E5FF}
+
+.footer{text-align:center;padding:28px 0 0;font-size:0.72rem;color:#4A4A6A}
+.footer a{color:var(--accent);text-decoration:none}
+
+.toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--success);color:#000;padding:10px 28px;border-radius:50px;font-weight:700;font-size:0.9rem;z-index:999;transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);pointer-events:none;box-shadow:0 4px 24px rgba(87,242,135,0.3)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  .container{padding:12px 8px 28px}
+  .header{padding:24px 0 16px}
+  .editor-top{flex-wrap:wrap;gap:8px}
+  .editor{padding:14px 14px;font-size:0.88rem;min-height:90px}
+  .swatch-btn,.bg-swatch{width:30px;height:30px}
+  .seq-swatch{width:24px;height:24px}
+  .seq-bar{flex-wrap:wrap;gap:6px}
+  .presets{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <h1>🎨 Discord Colored Text Generator</h1>
+    <p>Type in color. Select text, apply styles. Copy ANSI markdown for Discord.</p>
+  </header>
+
+  <!-- <div class="ad">GOOGLE ADSENSE TOP AD</div> -->
+
+  <!-- Editor -->
+  <div class="editor-section">
+    <div class="editor-top">
+      <label for="editor">✏️ Your Message</label>
+      <div class="editor-actions">
+        <button class="btn btn-hollow" id="resetBtn">↺ Reset Style</button>
+        <button class="btn btn-hollow danger" id="clearBtn">✕ Clear All</button>
+        <button class="btn btn-fill" id="copyBtn">📋 Copy ANSI</button>
+      </div>
+    </div>
+    <div class="editor-wrap">
+      <div class="editor" id="editor" contenteditable="true"
+      data-placeholder="Type here… your text appears in color as you type"
+      role="textbox" aria-multiline="true"></div>
+      <span class="char-count" id="charCount" title="ANSI character count / Discord 2000 limit"></span>
+    </div>
+  </div>
+
+  <!-- Picker -->
+  <div class="picker">
+    <div>
+      <div class="picker-label">Text Color</div>
+      <div class="picker-row" id="fgRow"></div>
+    </div>
+    <div>
+      <div class="picker-label">Background</div>
+      <div class="picker-row" id="bgRow"></div>
+    </div>
+    <div>
+      <div class="picker-label">Style</div>
+      <div class="picker-row">
+        <button class="style-btn" id="boldBtn"><span class="icon">𝐁</span> Bold</button>
+        <button class="style-btn" id="underlineBtn"><span class="icon">U̲</span> Underline</button>
+      </div>
+    </div>
+    <div>
+      <div class="picker-label">Color Sequence <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">— build pattern, select text, Apply</span></div>
+      <div class="presets">
+        <button class="preset-btn" data-preset="rainbow">🌈 Rainbow</button>
+        <button class="preset-btn" data-preset="sunset">🌅 Sunset</button>
+        <button class="preset-btn" data-preset="ocean">🌊 Ocean</button>
+        <button class="preset-btn" data-preset="fire">🔥 Fire</button>
+      </div>
+      <div class="picker-row" id="seqColors"></div>
+      <div class="seq-bar">
+        <div class="seq-blocks" id="seqBlocks"><span class="seq-empty">Click colors above to build a sequence…</span></div>
+        <div class="seq-actions">
+          <button class="btn btn-fill" id="seqApply" disabled>Apply</button>
+          <button class="btn btn-hollow" id="seqClear" disabled>Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="ad">GOOGLE ADSENSE BOTTOM AD</div> -->
+
+  <section class="seo">
+    <h2>How to Make Colored Text in Discord — The Complete Guide</h2>
+    <p>Want to know <strong>how to make colored text in Discord</strong>? Discord supports <strong>ANSI escape codes</strong> inside <code>```ansi</code> fenced code blocks to render colored text in chat messages. This works on <strong>Discord desktop, web, iOS, and Android</strong>. Our free <strong>Discord colored text generator</strong> gives you a WYSIWYG editor — you <strong>type directly in color</strong>, select text to apply styles, and copy the ANSI-formatted markdown with one click. No need to memorize escape sequences or manually type Discord ANSI color codes.</p>
+
+    <h3>How Discord ANSI Color Text Works</h3>
+    <p>ANSI (American National Standards Institute) escape codes control text formatting in terminals — colors, bold, underline. Discord adapted a subset for <code>```ansi</code> code blocks. To <strong>write in color on Discord</strong>, wrap your message in an ANSI code block and prefix each line with a code like <code>[31m]</code> for red or <code>[32m]</code> for green. Discord renders each line in the specified color. Using a <strong>color text generator for Discord</strong> makes this process instant — just type, style, copy, and paste.</p>
+
+    <h3>Discord ANSI Color Code List — Supported Colors &amp; Styles</h3>
+    <p>Discord supports <strong>8 foreground colors for text</strong>: Gray <code>[30m]</code>, Red <code>[31m]</code>, Green <code>[32m]</code>, Yellow <code>[33m]</code>, Blue <code>[34m]</code>, Magenta <code>[35m]</code>, Cyan <code>[36m]</code>, White <code>[37m]</code>. Plus <strong>8 background colors</strong> (<code>[40m]</code>–<code>[47m]</code>), <strong>bold text</strong> via <code>[1m]</code>, and <strong>underlined text</strong> via <code>[4m]</code>. Combine codes with semicolons — for example <code>[1;4;31;44m]</code> makes bold, underlined, red text on a blue background. The <strong>reset code</strong> <code>[0m]</code> clears all active styles. This <strong>Discord ANSI code list</strong> covers every formatting option available.</p>
+
+    <h3>How to Write in Color on Discord — Step by Step</h3>
+    <ol>
+      <li><strong>Type your message</strong> in the Discord-styled editor — text appears in color as you type, just like a rich text editor. A built-in <strong>character counter</strong> at the bottom-right tracks your ANSI output length so you never exceed Discord's 2,000-character limit.</li>
+      <li><strong>Select any text</strong> and click a color swatch to apply that <strong>Discord chat color</strong>. Use Bold or Underline for emphasis, or mix foreground and background colors.</li>
+      <li>For <strong>rainbow or multi-color text</strong>, use the <strong>Color Sequence builder</strong> — click colors to build a pattern, or load a one-click preset (🌈 Rainbow, 🌅 Sunset, 🌊 Ocean, 🔥 Fire). Select your text and hit Apply to color each character in sequence.</li>
+      <li>Click <strong>Copy ANSI</strong> to copy the formatted markdown to your clipboard. The tool generates valid <code>```ansi</code> syntax ready for Discord.</li>
+      <li><strong>Paste into any Discord channel</strong>, DM, or server — the colored text renders automatically on all platforms.</li>
+    </ol>
+
+    <h3>Frequently Asked Questions About Discord Colored Text</h3>
+    <p><strong>Does ANSI colored text work on Discord mobile?</strong><br>Yes! ANSI-colored messages display correctly on Discord iOS and Android apps, desktop, and web. The <strong>colored text Discord</strong> renders is parsed natively on all platforms — your friends on mobile will see the same colors as desktop users.</p>
+    <p><strong>How do I make rainbow or multi-colored text in Discord?</strong><br>Our <strong>Discord color text generator</strong> lets you <strong>mix multiple colors in a single message</strong>. Select any portion of text, click a different color — that text keeps its color. Repeat for each section. You can create red, green, blue, yellow, and more all in one message. Great for <strong>Discord colored messages</strong> for server rules, announcements, or creative chat.</p>
+    <p><strong>Can I do bold colored text on Discord?</strong><br>Yes — <strong>bold and colored text Discord</strong> messages are fully supported. Select your text, click the Bold button, then apply any color. The generated ANSI code combines them: <code>[1;31m]</code> makes <strong>bold red text</strong>. You can even combine bold + underline + color + background all at once.</p>
+    <p><strong>Is there a free Discord text color changer?</strong><br>Yes — this <strong>Discord colored text generator is completely free</strong>. No sign-up, no watermarks, no limits. Generate unlimited <strong>Discord ANSI colored text</strong> for your servers, bot messages, welcome messages, rules, or any creative use. No download or installation needed — it's an online tool that works right in your browser.</p>
+    <p><strong>Why isn't my colored text showing in Discord after pasting?</strong><br>If your <strong>Discord color message</strong> isn't rendering, check: (1) You pasted the entire block including <code>```ansi</code> and <code>```</code>. (2) Each line starts with an ANSI code like <code>[31m]</code>. (3) You're pasting into a regular message, not a channel topic or embed. (4) Your message is under the 2,000 character Discord limit. ANSI coloring only works inside fenced code blocks with the <code>ansi</code> language tag.</p>
+    <p><strong>What's the Discord ANSI character limit?</strong><br>Discord's 2,000 character limit includes the ANSI codes and the <code>```ansi</code> wrapper. Each color code like <code>[31m]</code> counts as 4 characters. For <strong>Discord colored text formatting</strong>, plan for about 1,900 usable characters after accounting for codes and the fenced block markers.</p>
+  </section>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+      "@type": "Question", "name": "Does ANSI colored text work on Discord mobile?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. ANSI-colored messages display correctly on Discord iOS, Android, desktop, and web. All platforms render Discord ANSI colors natively." }
+    },{
+      "@type": "Question", "name": "How do I make multi-colored text in Discord?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Use the Discord color text generator to apply different colors to different parts of your message. Select text, click a color, repeat. Mix red, green, blue, and more in one message." }
+    },{
+      "@type": "Question", "name": "Can I make bold colored text on Discord?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Click Bold then apply a color. The ANSI code [1;31m] produces bold red text. Combine bold, underline, color, and background freely." }
+    },{
+      "@type": "Question", "name": "Is this Discord colored text generator free?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, completely free. No sign-up, no watermarks, no limits. Online tool, works in your browser." }
+    },{
+      "@type": "Question", "name": "Why isn't my colored text showing in Discord?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Make sure you paste the entire ```ansi code block, each line starts with a code like [31m], and you're within the 2,000 character limit." }
+    }]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Generate Discord Colored Text",
+    "description": "Use the WYSIWYG editor to create ANSI colored messages for Discord in 4 easy steps.",
+    "step": [
+      { "@type": "HowToStep", "name": "Type your message", "text": "Type in the Discord-styled editor. Text appears in color as you type." },
+      { "@type": "HowToStep", "name": "Apply colors and styles", "text": "Select text and click a color swatch or Bold/Underline button." },
+      { "@type": "HowToStep", "name": "Copy ANSI markdown", "text": "Click the Copy ANSI button to copy the formatted markdown." },
+      { "@type": "HowToStep", "name": "Paste into Discord", "text": "Paste directly into any Discord channel. Colors render automatically." }
+    ]
+  }
+  </script>
+
+  <footer class="footer">
+    <p>Not affiliated with Discord Inc. &nbsp;·&nbsp; <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms of Service</a></p>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast">✓ Copied!</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var FG = [
+    { ansi:'30', css:'#80848E', name:'Gray' },
+    { ansi:'31', css:'#ED4245', name:'Red' },
+    { ansi:'32', css:'#57F287', name:'Green' },
+    { ansi:'33', css:'#FEE75C', name:'Yellow' },
+    { ansi:'34', css:'#5865F2', name:'Blue' },
+    { ansi:'35', css:'#EB459E', name:'Magenta' },
+    { ansi:'36', css:'#00E5FF', name:'Cyan' },
+    { ansi:'37', css:'#FFFFFF', name:'White' },
+  ];
+  var BG = [
+    { ansi:'40', css:'#4F545C', name:'Gray' },
+    { ansi:'41', css:'#ED4245', name:'Red' },
+    { ansi:'42', css:'#57F287', name:'Green' },
+    { ansi:'43', css:'#FEE75C', name:'Yellow' },
+    { ansi:'44', css:'#5865F2', name:'Blue' },
+    { ansi:'45', css:'#EB459E', name:'Magenta' },
+    { ansi:'46', css:'#00E5FF', name:'Cyan' },
+    { ansi:'47', css:'#FFFFFF', name:'White' },
+  ];
+  var FG_RGB = [
+    { ansi:'30', r:128,g:132,b:142 },{ ansi:'31', r:237,g:66,b:69 },
+    { ansi:'32', r:87,g:242,b:135 },{ ansi:'33', r:254,g:231,b:92 },
+    { ansi:'34', r:88,g:101,b:242 },{ ansi:'35', r:235,g:69,b:158 },
+    { ansi:'36', r:0,g:229,b:255 },{ ansi:'37', r:255,g:255,b:255 },
+  ];
+  var BG_RGB = [
+    { ansi:'40', r:79,g:84,b:92 },  { ansi:'41', r:237,g:66,b:69 },
+    { ansi:'42', r:87,g:242,b:135 },{ ansi:'43', r:254,g:231,b:92 },
+    { ansi:'44', r:88,g:101,b:242 },{ ansi:'45', r:235,g:69,b:158 },
+    { ansi:'46', r:0,g:229,b:255 },{ ansi:'47', r:255,g:255,b:255 },
+  ];
+
+  var editor    = document.getElementById('editor');
+  var copyBtn   = document.getElementById('copyBtn');
+  var toast     = document.getElementById('toast');
+  var seqBlocks = document.getElementById('seqBlocks');
+  var seqApply  = document.getElementById('seqApply');
+  var seqClear  = document.getElementById('seqClear');
+  var sequence  = [];
+
+  // Presets
+  var PRESETS = {
+    rainbow: [FG[1],FG[3],FG[2],FG[6],FG[4],FG[5]],   // Red,Yellow,Green,Cyan,Blue,Magenta
+    sunset:  [FG[1],FG[3],FG[5],FG[1]],                 // Red,Yellow,Magenta,Red
+    ocean:   [FG[6],FG[4],FG[0],FG[6]],                 // Cyan,Blue,Gray,Cyan
+    fire:    [FG[1],FG[3],FG[1],FG[3],FG[5]],           // Red,Yellow,Red,Yellow,Magenta
+  };
+  document.querySelectorAll('.preset-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var key = this.dataset.preset;
+      if (PRESETS[key]) { sequence = PRESETS[key].slice(); updateSeqUI(); }
+    });
+  });
+
+  // Character counter
+  var charCount = document.getElementById('charCount');
+  function updateCharCount() {
+    var ansi = domToANSI(editor);
+    var len = ansi ? ansi.length : 0;
+    var max = 2000;
+    charCount.textContent = len + ' / ' + max;
+    charCount.className = 'char-count' + (len > max ? ' danger' : len > max * 0.9 ? ' warn' : '');
+  }
+  editor.addEventListener('input', updateCharCount);
+
+  function updateSeqUI() {
+    seqBlocks.innerHTML = sequence.length
+      ? sequence.map(function(s,i) {
+          return '<span class="seq-dot" title="'+s.name+' ('+(i+1)+')" style="background:'+s.css+'" data-idx="'+i+'"></span>';
+        }).join('')
+      : '<span class="seq-empty">Click color swatches above to build a sequence…</span>';
+    seqApply.disabled = sequence.length === 0;
+    seqClear.disabled = sequence.length === 0;
+    // Click dot to remove from sequence
+    seqBlocks.querySelectorAll('.seq-dot').forEach(function(d) {
+      d.addEventListener('click', function() {
+        sequence.splice(parseInt(this.dataset.idx), 1);
+        updateSeqUI();
+      });
+    });
+  }
+
+  function addToSeq(c) {
+    sequence.push(c);
+    updateSeqUI();
+  }
+
+  function applySequence() {
+    var sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed || !sequence.length) return;
+    var range = sel.getRangeAt(0);
+    var text = range.toString();
+    if (!text) return;
+    range.deleteContents();
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < text.length; i++) {
+      var s = sequence[i % sequence.length];
+      var el = document.createElement('font');
+      el.setAttribute('color', s.css);
+      el.textContent = text[i];
+      frag.appendChild(el);
+    }
+    range.insertNode(frag);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    updateCharCount();
+  }
+
+  // FG: colored circles — apply directly, don't touch sequence
+  FG.forEach(function(c) {
+    var b = document.createElement('button');
+    b.className = 'swatch-btn';
+    b.title = c.name;
+    b.style.background = c.css;
+    if (c.ansi === '37' || c.ansi === '33') b.style.borderColor = 'rgba(255,255,255,0.15)';
+    b.addEventListener('mousedown', function(e) {
+      e.preventDefault(); editor.focus();
+      document.execCommand('foreColor', false, c.css);
+      updateCharCount();
+    });
+    document.getElementById('fgRow').appendChild(b);
+  });
+
+  // BG: rounded squares — first one clears background
+  (function() {
+    var b = document.createElement('button');
+    b.className = 'bg-swatch';
+    b.title = 'No background';
+    b.style.background = 'transparent';
+    b.style.borderStyle = 'dashed';
+    b.addEventListener('mousedown', function(e) {
+      e.preventDefault(); editor.focus();
+      document.execCommand('backColor', false, 'transparent');
+      updateCharCount();
+    });
+    document.getElementById('bgRow').appendChild(b);
+  })();
+  BG.forEach(function(c) {
+    var b = document.createElement('button');
+    b.className = 'bg-swatch';
+    b.title = c.name;
+    b.style.background = c.css;
+    b.addEventListener('mousedown', function(e) {
+      e.preventDefault(); editor.focus();
+      document.execCommand('backColor', false, c.css);
+      updateCharCount();
+    });
+    document.getElementById('bgRow').appendChild(b);
+  });
+
+  // Sequence-only color buttons (foreground only)
+  FG.forEach(function(c) {
+    var b = document.createElement('button');
+    b.className = 'seq-swatch';
+    b.title = 'Add ' + c.name + ' to sequence';
+    b.style.background = c.css;
+    if (c.ansi === '37' || c.ansi === '33') b.style.borderColor = 'rgba(255,255,255,0.3)';
+    b.addEventListener('click', function() { addToSeq(c); });
+    document.getElementById('seqColors').appendChild(b);
+  });
+
+  // Sequence actions (mousedown keeps selection alive)
+  seqApply.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    applySequence();
+  });
+  seqClear.addEventListener('click', function() {
+    sequence = [];
+    updateSeqUI();
+  });
+
+  // Style
+  document.getElementById('boldBtn').addEventListener('mousedown', function(e) {
+    e.preventDefault(); editor.focus(); document.execCommand('bold'); updateCharCount();
+  });
+  document.getElementById('underlineBtn').addEventListener('mousedown', function(e) {
+    e.preventDefault(); editor.focus(); document.execCommand('underline'); updateCharCount();
+  });
+
+  // Reset: strip formatting
+  document.getElementById('resetBtn').addEventListener('mousedown', function(e) {
+    e.preventDefault(); document.execCommand('removeFormat'); updateCharCount();
+  });
+  // Clear
+  document.getElementById('clearBtn').addEventListener('click', function() {
+    editor.innerHTML = ''; editor.focus(); updateCharCount();
+  });
+
+  // DOM → ANSI
+  function parseRGB(s) {
+    var m = s.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+    return m ? { r:parseInt(m[1]), g:parseInt(m[2]), b:parseInt(m[3]), a:m[4]!==undefined?parseFloat(m[4]):1 } : null;
+  }
+  function closest(r,g,b,t) {
+    var best=t[0], bestD=Infinity;
+    for (var i=0;i<t.length;i++) {
+      var dr=r-t[i].r, dg=g-t[i].g, db=b-t[i].b, d=dr*dr+dg*dg+db*db;
+      if (d<bestD) { bestD=d; best=t[i]; }
+    }
+    return best.ansi;
+  }
+
+  function domToANSI(root) {
+    var lines=[], cur='', lastPrefix='';
+    (function walk(node,st) {
+      if (node.nodeType===3) {
+        var parts=node.textContent.split('\n');
+        for (var i=0;i<parts.length;i++) {
+          if (i>0) { lines.push(cur); cur=''; lastPrefix=''; }
+          if (!parts[i]) continue;
+          var p=[];
+          if (st.bold) p.push('1');
+          if (st.underline) p.push('4');
+          p.push(st.fg);
+          if (st.bg) p.push(st.bg);
+          var prefix='['+p.join(';')+'m';
+          if (prefix===lastPrefix) { cur+=parts[i]; }
+          else { cur+=prefix+parts[i]; lastPrefix=prefix; }
+        }
+        return;
+      }
+      if (node.nodeType!==1) return;
+      var tag=node.tagName.toLowerCase();
+      var ns={ fg:st.fg, bg:st.bg, bold:st.bold, underline:st.underline };
+      if (/^(font|span|b|u|strong|em)$/.test(tag)) {
+        var cs=getComputedStyle(node);
+        var fgR=parseRGB(cs.color);
+        if (fgR) ns.fg=closest(fgR.r,fgR.g,fgR.b,FG_RGB);
+        if (cs.fontWeight==='bold'||parseInt(cs.fontWeight)>=700) ns.bold=true;
+        if (cs.textDecoration.indexOf('underline')!==-1) ns.underline=true;
+        if (node.style&&node.style.backgroundColor&&node.style.backgroundColor!==''&&node.style.backgroundColor!=='transparent') {
+          var bgR=parseRGB(cs.backgroundColor);
+          if (bgR&&bgR.a>0) ns.bg=closest(bgR.r,bgR.g,bgR.b,BG_RGB);
+        }
+      }
+      if (tag==='b'||tag==='strong') ns.bold=true;
+      if (tag==='u') ns.underline=true;
+      for (var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i],ns);
+    })(root,{ fg:'37', bg:null, bold:false, underline:false });
+    if (cur||lines.length===0) lines.push(cur);
+    return lines.join('\n');
+  }
+
+  function copy() {
+    if (!editor.textContent.trim()) return;
+    var ansi=domToANSI(editor);
+    if (!ansi) return;
+    var md='```ansi\n'+ansi+'\n```';
+    if (navigator.clipboard&&navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(md).then(flash).catch(fc);
+    } else fc();
+    function fc() {
+      var ta=document.createElement('textarea');
+      ta.value=md; ta.style.position='fixed'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand('copy'); flash(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  }
+
+  function flash() {
+    copyBtn.classList.add('copied');
+    copyBtn.innerHTML='<span>✓</span> Copied!';
+    toast.classList.add('show');
+    setTimeout(function() {
+      copyBtn.classList.remove('copied');
+      copyBtn.innerHTML='📋 Copy ANSI';
+      toast.classList.remove('show');
+    },2000);
+  }
+
+  copyBtn.addEventListener('click', copy);
+  editor.focus();
+})();
+</script>
+</body>
+</html>
