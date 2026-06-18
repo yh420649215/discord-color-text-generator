@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ECED45ZYC7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-ECED45ZYC7');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Discord Colored Text Generator — Free ANSI Color Markdown Tool</title>
@@ -121,6 +129,9 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
 .seo h3{font-size:0.95rem;font-weight:600;color:var(--text);margin:18px 0 6px}
 .seo p,.seo li{font-size:0.85rem;color:#B0B0C0;line-height:1.7;margin-bottom:8px}
 .seo code{background:#0D0D1A;padding:1px 6px;border-radius:3px;font-family:'SF Mono','Fira Code',monospace;font-size:0.78rem;color:#00E5FF}
+.faq-list{margin:0}
+.faq-list dt{font-weight:700;color:var(--text);font-size:0.88rem;margin:16px 0 4px}
+.faq-list dd{color:#B0B0C0;font-size:0.85rem;line-height:1.7;margin:0 0 8px;padding:0}
 
 .footer{text-align:center;padding:28px 0 0;font-size:0.72rem;color:#4A4A6A}
 .footer a{color:var(--accent);text-decoration:none}
@@ -157,15 +168,15 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
     <div class="editor-top">
       <label for="editor">✏️ Your Message</label>
       <div class="editor-actions">
-        <button class="btn btn-hollow" id="resetBtn">↺ Reset Style</button>
-        <button class="btn btn-hollow danger" id="clearBtn">✕ Clear All</button>
-        <button class="btn btn-fill" id="copyBtn">📋 Copy ANSI</button>
+        <button class="btn btn-hollow" id="resetBtn" aria-label="Remove formatting from selected text">↺ Reset Style</button>
+        <button class="btn btn-hollow danger" id="clearBtn" aria-label="Clear all text">✕ Clear All</button>
+        <button class="btn btn-fill" id="copyBtn" aria-label="Copy ANSI markdown to clipboard">📋 Copy ANSI</button>
       </div>
     </div>
     <div class="editor-wrap">
       <div class="editor" id="editor" contenteditable="true"
       data-placeholder="Type here… your text appears in color as you type"
-      role="textbox" aria-multiline="true"></div>
+      role="textbox" aria-multiline="true" aria-label="Message editor — type in color directly"></div>
       <span class="char-count" id="charCount" title="ANSI character count / Discord 2000 limit"></span>
     </div>
   </div>
@@ -228,33 +239,98 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
     </ol>
 
     <h3>Frequently Asked Questions About Discord Colored Text</h3>
-    <p><strong>Does ANSI colored text work on Discord mobile?</strong><br>Yes! ANSI-colored messages display correctly on Discord iOS and Android apps, desktop, and web. The <strong>colored text Discord</strong> renders is parsed natively on all platforms — your friends on mobile will see the same colors as desktop users.</p>
-    <p><strong>How do I make rainbow or multi-colored text in Discord?</strong><br>Our <strong>Discord color text generator</strong> lets you <strong>mix multiple colors in a single message</strong>. Select any portion of text, click a different color — that text keeps its color. Repeat for each section. You can create red, green, blue, yellow, and more all in one message. Great for <strong>Discord colored messages</strong> for server rules, announcements, or creative chat.</p>
-    <p><strong>Can I do bold colored text on Discord?</strong><br>Yes — <strong>bold and colored text Discord</strong> messages are fully supported. Select your text, click the Bold button, then apply any color. The generated ANSI code combines them: <code>[1;31m]</code> makes <strong>bold red text</strong>. You can even combine bold + underline + color + background all at once.</p>
-    <p><strong>Is there a free Discord text color changer?</strong><br>Yes — this <strong>Discord colored text generator is completely free</strong>. No sign-up, no watermarks, no limits. Generate unlimited <strong>Discord ANSI colored text</strong> for your servers, bot messages, welcome messages, rules, or any creative use. No download or installation needed — it's an online tool that works right in your browser.</p>
-    <p><strong>Why isn't my colored text showing in Discord after pasting?</strong><br>If your <strong>Discord color message</strong> isn't rendering, check: (1) You pasted the entire block including <code>```ansi</code> and <code>```</code>. (2) Each line starts with an ANSI code like <code>[31m]</code>. (3) You're pasting into a regular message, not a channel topic or embed. (4) Your message is under the 2,000 character Discord limit. ANSI coloring only works inside fenced code blocks with the <code>ansi</code> language tag.</p>
-    <p><strong>What's the Discord ANSI character limit?</strong><br>Discord's 2,000 character limit includes the ANSI codes and the <code>```ansi</code> wrapper. Each color code like <code>[31m]</code> counts as 4 characters. For <strong>Discord colored text formatting</strong>, plan for about 1,900 usable characters after accounting for codes and the fenced block markers.</p>
+
+    <dl class="faq-list">
+      <dt>Does ANSI colored text work on Discord mobile?</dt>
+      <dd>Yes. ANSI-colored messages display correctly on Discord iOS, Android, desktop, and web. All platforms render Discord ANSI colors natively — your friends on mobile will see the same colors as desktop users.</dd>
+
+      <dt>How do I make rainbow or multi-colored text in Discord?</dt>
+      <dd>Use the Color Sequence builder above. Click colors to build a pattern (or load a preset like Rainbow), select your text, and hit Apply. Each character gets colored in sequence. You can also manually select different portions of text and apply different colors one at a time.</dd>
+
+      <dt>Can I do bold colored text on Discord?</dt>
+      <dd>Yes. Select your text, click Bold, then apply any color. The ANSI code <code>[1;31m]</code> produces bold red text. You can combine bold, underline, foreground, and background colors all in one message using semicolons between codes.</dd>
+
+      <dt>Is there a free Discord text color changer?</dt>
+      <dd>Yes — this tool is completely free. No sign-up, no watermarks, no limits. It works entirely in your browser with no downloads or installations needed.</dd>
+
+      <dt>Why isn't my colored text showing in Discord after pasting?</dt>
+      <dd>Check: (1) You pasted the entire block including <code>```ansi</code> and <code>```</code>. (2) Each line starts with an ANSI code. (3) You're pasting into a channel message, not a topic or embed. (4) Your message is under Discord's 2,000 character limit.</dd>
+
+      <dt>What's the Discord ANSI character limit?</dt>
+      <dd>Discord messages are capped at 2,000 characters total, including ANSI codes. Each color code like <code>[31m]</code> uses 4 characters. The <code>```ansi</code> wrapper adds about 10 characters. Plan for roughly 1,900 usable text characters after code overhead.</dd>
+
+      <dt>Can I use ANSI colors in Discord server names or channel topics?</dt>
+      <dd>No. ANSI coloring only works inside <code>```ansi</code> fenced code blocks within regular chat messages. It does not work in server names, channel topics, usernames, or message embeds.</dd>
+
+      <dt>How do I get colored text without using ANSI codes?</dt>
+      <dd>There is no native way to color text in Discord without ANSI codes. Some bots can send colored embeds via the Discord API, but for regular users, ANSI code blocks are the only method. This tool handles all the code generation for you — just type, style, copy, and paste.</dd>
+
+      <dt>Does Discord ANSI support custom colors or hex codes?</dt>
+      <dd>No. Discord only supports the 8 standard ANSI foreground colors (30-37) and 8 background colors (40-47). Custom hex codes and RGB values are not supported. This tool uses these exact ANSI codes to ensure compatibility.</dd>
+    </dl>
   </section>
 
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Discord Colored Text Generator",
+    "url": "https://discordcoloredtext.com/",
+    "description": "Free WYSIWYG tool to generate ANSI colored text for Discord. 8 foreground colors, 8 background colors, bold, underline, rainbow sequences.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://discordcoloredtext.com/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem", "position": 1, "name": "Discord Colored Text Generator",
+      "item": "https://discordcoloredtext.com/"
+    }]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Discord Colored Text Generator",
+    "applicationCategory": "WebApplication",
+    "operatingSystem": "All",
+    "description": "WYSIWYG editor for generating Discord ANSI colored text. Supports 8 foreground colors, 8 background colors, bold, underline, and color sequences with presets.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "browserRequirements": "Requires JavaScript"
+  }
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [{
       "@type": "Question", "name": "Does ANSI colored text work on Discord mobile?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes. ANSI-colored messages display correctly on Discord iOS, Android, desktop, and web. All platforms render Discord ANSI colors natively." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. ANSI-colored messages display on Discord iOS, Android, desktop, and web. All platforms render Discord ANSI colors natively." }
     },{
-      "@type": "Question", "name": "How do I make multi-colored text in Discord?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Use the Discord color text generator to apply different colors to different parts of your message. Select text, click a color, repeat. Mix red, green, blue, and more in one message." }
+      "@type": "Question", "name": "How do I make rainbow or multi-colored text in Discord?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Use the Color Sequence builder: click colors to build a pattern, load a preset like Rainbow, select text, and hit Apply. Each character gets colored in sequence." }
     },{
       "@type": "Question", "name": "Can I make bold colored text on Discord?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Click Bold then apply a color. The ANSI code [1;31m] produces bold red text. Combine bold, underline, color, and background freely." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Select text, click Bold, then apply a color. The ANSI code [1;31m] produces bold red text. Combine bold, underline, foreground, and background freely." }
     },{
-      "@type": "Question", "name": "Is this Discord colored text generator free?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes, completely free. No sign-up, no watermarks, no limits. Online tool, works in your browser." }
+      "@type": "Question", "name": "Is there a free Discord text color changer?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, this tool is completely free. No sign-up, no watermarks, no limits. Works entirely in your browser." }
     },{
-      "@type": "Question", "name": "Why isn't my colored text showing in Discord?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Make sure you paste the entire ```ansi code block, each line starts with a code like [31m], and you're within the 2,000 character limit." }
+      "@type": "Question", "name": "Why isn't my colored text showing in Discord after pasting?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Make sure you paste the entire ```ansi code block, each line starts with an ANSI code, you're pasting into a channel message, and you're within Discord's 2,000 character limit." }
+    },{
+      "@type": "Question", "name": "Can I use ANSI colors in Discord server names or channel topics?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. ANSI coloring only works inside ```ansi code blocks within regular chat messages, not in server names, channel topics, usernames, or embeds." }
+    },{
+      "@type": "Question", "name": "Does Discord support custom ANSI colors or hex codes?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Discord only supports the 8 standard ANSI foreground colors (30-37) and 8 background colors (40-47). Custom hex codes and RGB values are not supported." }
     }]
   }
   </script>
@@ -262,19 +338,19 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
   {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    "name": "How to Generate Discord Colored Text",
-    "description": "Use the WYSIWYG editor to create ANSI colored messages for Discord in 4 easy steps.",
+    "name": "Generate Discord Colored Text",
+    "description": "Use the free WYSIWYG editor to create ANSI colored messages for Discord in a few simple steps.",
     "step": [
-      { "@type": "HowToStep", "name": "Type your message", "text": "Type in the Discord-styled editor. Text appears in color as you type." },
-      { "@type": "HowToStep", "name": "Apply colors and styles", "text": "Select text and click a color swatch or Bold/Underline button." },
-      { "@type": "HowToStep", "name": "Copy ANSI markdown", "text": "Click the Copy ANSI button to copy the formatted markdown." },
-      { "@type": "HowToStep", "name": "Paste into Discord", "text": "Paste directly into any Discord channel. Colors render automatically." }
+      { "@type": "HowToStep", "name": "Type your message", "text": "Type in the Discord-styled editor. Use the character counter to stay within the 2,000 limit." },
+      { "@type": "HowToStep", "name": "Apply colors and styles", "text": "Select text and click a color swatch or Bold/Underline. Use the Color Sequence builder for rainbow effects." },
+      { "@type": "HowToStep", "name": "Copy ANSI markdown", "text": "Click Copy ANSI to copy the formatted ```ansi code block to your clipboard." },
+      { "@type": "HowToStep", "name": "Paste into Discord", "text": "Paste into any Discord channel. ANSI colors render automatically on all platforms." }
     ]
   }
   </script>
 
   <footer class="footer">
-    <p>Not affiliated with Discord Inc. &nbsp;·&nbsp; <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms of Service</a></p>
+    <p>Last updated: June 2026 &nbsp;·&nbsp; Not affiliated with Discord Inc. &nbsp;·&nbsp; <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms of Service</a></p>
   </footer>
 
 </div>
