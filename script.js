@@ -71,7 +71,7 @@
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
-      editor.focus();
+      editor.focus({ preventScroll: true });
       if (!_tryExec('foreColor', css)) {
         // iOS fallback
         var contents = range.extractContents();
@@ -92,7 +92,7 @@
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
-      editor.focus();
+      editor.focus({ preventScroll: true });
       if (!_tryExec('backColor', css)) {
         var contents = range.extractContents();
         var span = document.createElement('span');
@@ -112,7 +112,7 @@
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
-      editor.focus();
+      editor.focus({ preventScroll: true });
       if (!_tryExec('bold')) {
         var contents = range.extractContents();
         // Toggle: check if already inside <b> or <strong>
@@ -139,7 +139,7 @@
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
-      editor.focus();
+      editor.focus({ preventScroll: true });
       if (!_tryExec('underline')) {
         var contents = range.extractContents();
         var u = document.createElement('u');
@@ -158,7 +158,7 @@
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
-      editor.focus();
+      editor.focus({ preventScroll: true });
       if (!_tryExec('removeFormat')) {
         var text = range.toString();
         range.deleteContents();
