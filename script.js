@@ -66,12 +66,20 @@
     sel.removeAllRanges();
     sel.addRange(range);
   }
+  function _safeFocus() {
+    var x = window.scrollX;
+    var y = window.scrollY;
+    editor.focus({ preventScroll: true });
+    if (window.scrollX !== x || window.scrollY !== y) {
+      window.scrollTo(x, y);
+    }
+  }
   function applyForeColor(css) {
     var sel = window.getSelection();
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
-      editor.focus({ preventScroll: true });
+      _safeFocus();
       if (!_tryExec('foreColor', css)) {
         // iOS fallback
         var contents = range.extractContents();
@@ -92,7 +100,7 @@
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
-      editor.focus({ preventScroll: true });
+      _safeFocus();
       if (!_tryExec('backColor', css)) {
         var contents = range.extractContents();
         var span = document.createElement('span');
@@ -112,7 +120,7 @@
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
-      editor.focus({ preventScroll: true });
+      _safeFocus();
       if (!_tryExec('bold')) {
         var contents = range.extractContents();
         // Toggle: check if already inside <b> or <strong>
@@ -139,7 +147,7 @@
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
-      editor.focus({ preventScroll: true });
+      _safeFocus();
       if (!_tryExec('underline')) {
         var contents = range.extractContents();
         var u = document.createElement('u');
@@ -158,7 +166,7 @@
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
-      editor.focus({ preventScroll: true });
+      _safeFocus();
       if (!_tryExec('removeFormat')) {
         var text = range.toString();
         range.deleteContents();
@@ -338,7 +346,7 @@
   });
   // Clear
   document.getElementById('clearBtn').addEventListener('click', function() {
-    editor.innerHTML = ''; editor.focus(); updateCharCount();
+    editor.innerHTML = ''; _safeFocus(); updateCharCount();
   });
 
   // DOM → ANSI
