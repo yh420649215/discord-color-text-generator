@@ -12,152 +12,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Discord Colored Text Generator — Free ANSI Color Markdown Tool</title>
-<meta name="description" content="Free Discord colored text generator with WYSIWYG editor. Create ANSI colored messages with 8 foreground colors, 8 background colors, bold and underline. Type in color, copy ANSI markdown for Discord. No sign-up required.">
+<meta name="description" content="Free Discord colored text generator with WYSIWYG editor. Type in color, apply 8 foreground &amp; background colors, bold, underline, rainbow sequences. Copy ready-to-paste ANSI markdown for Discord in one click. No sign-up, no limits.">
 <meta name="keywords" content="discord colored text, discord ansi colors, discord text generator, ansi escape codes discord, discord markdown colors, colored text discord, discord color message, ansi color code generator">
 <meta name="robots" content="index, follow, max-image-preview:large">
-<link rel="canonical" href="https://discordcoloredtext.com/">
+<link rel="canonical" href="https://discord-color-text-generator-nine.vercel.app/">
 <meta property="og:title" content="Discord Colored Text Generator — Free ANSI Color Markdown Tool">
-<meta property="og:description" content="Type in color with the WYSIWYG editor. 8 foreground colors, 8 background colors, bold, underline. Copy ANSI markdown for Discord instantly. Free, no sign-up.">
+<meta property="og:description" content="Type in ANSI color like a rich text editor. 8 foreground + 8 background colors, bold, underline, rainbow sequences. Copy Discord-ready markdown in one click. 100% free, no sign-up.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://discordcoloredtext.com/">
+<meta property="og:url" content="https://discord-color-text-generator-nine.vercel.app/">
+<meta property="og:updated_time" content="2026-06-19">
+<meta property="article:modified_time" content="2026-06-19">
+<meta property="og:image" content="https://discord-color-text-generator-nine.vercel.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Discord Colored Text Generator — Type in color, copy ANSI markdown, 100% free. 8 foreground, 8 background, bold, underline, rainbow presets.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Discord Colored Text Generator">
-<meta name="twitter:description" content="WYSIWYG editor for Discord ANSI colored text. Type in color, copy markdown. Free.">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#1A1A2E;--surface:#222240;--card:#252545;--border:#2D2D4A;
-  --accent:#5865F2;--accent-hover:#4752C4;--glow:#5865F230;
-  --success:#57F287;--text:#F2F3F5;--muted:#949BA4;
-  --editor-bg:#313338;--editor-text:#DBDEE1;
-  --font:'gg sans','Whitney','Helvetica Neue',Helvetica,Arial,sans-serif;
-  --ui:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-}
-html{font-size:16px;scroll-behavior:smooth}
-body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
-.container{max-width:780px;margin:0 auto;padding:28px 20px 40px}
-
-/* Header */
-.header{text-align:center;padding:40px 0 28px}
-.header h1{font-size:clamp(1.4rem,3.5vw,2rem);font-weight:800;background:linear-gradient(135deg,var(--accent),#00E5FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;letter-spacing:-0.01em}
-.header p{color:var(--muted);font-size:0.9rem}
-
-.ad{background:var(--card);border:1px dashed var(--border);border-radius:12px;min-height:90px;display:flex;align-items:center;justify-content:center;color:#4A4A6A;font-size:0.75rem;margin:12px 0;text-transform:uppercase;letter-spacing:0.1em}
-
-/* Editor */
-.editor-section{margin:8px 0 28px}
-.editor-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.editor-top label{font-weight:700;font-size:0.88rem;color:var(--text);letter-spacing:-0.01em}
-.editor-actions{display:flex;gap:6px;margin-top:10px;justify-content:flex-end}
-.btn{display:inline-flex;align-items:center;gap:4px;padding:7px 15px;font-size:0.78rem;font-weight:600;font-family:var(--ui);border:none;border-radius:8px;cursor:pointer;transition:all 0.15s ease}
-.btn-fill{background:var(--accent);color:#fff}
-.btn-fill:hover{background:var(--accent-hover);box-shadow:0 2px 12px var(--glow)}
-.btn-fill.copied{background:var(--success);color:#000;pointer-events:none}
-.btn-hollow{background:transparent;color:var(--muted);border:1px solid var(--border)}
-.btn-hollow:hover{background:var(--card);color:var(--text)}
-.btn-hollow.danger:hover{color:#ED4245;border-color:#ED424530}
-
-.editor{
-  width:100%;padding:18px 20px;font-size:0.93rem;font-family:var(--font);
-  background:var(--editor-bg);border:2px solid var(--border);border-radius:12px;
-  color:var(--editor-text);outline:none;transition:border-color 0.2s,box-shadow 0.2s;
-  min-height:110px;line-height:1.55;word-break:break-word;overflow-y:auto;
-  box-shadow:0 4px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.02);
-}
-.editor:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow),0 4px 24px rgba(0,0,0,0.4)}
-.editor:empty::before{content:attr(data-placeholder);color:var(--muted);font-style:italic;pointer-events:none}
-.editor-wrap{position:relative}
-.editor-wrap .char-count{position:absolute;bottom:8px;right:14px;z-index:1;pointer-events:none}
-
-/* Picker */
-.picker{display:flex;flex-direction:column;gap:18px;margin:24px 0 8px}
-.picker-label{font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px}
-.picker-row{display:flex;flex-wrap:wrap;gap:6px}
-
-/* FG swatches: colored circles */
-.swatch-btn{
-  width:35px;height:35px;border-radius:50%;border:2.5px solid transparent;
-  cursor:pointer;outline:none;transition:all 0.12s ease;position:relative;flex-shrink:0;
-}
-.swatch-btn:hover{transform:scale(1.15);border-color:rgba(255,255,255,0.3);z-index:1}
-.swatch-btn:active{transform:scale(0.92)}
-
-/* BG swatches: rounded squares */
-.bg-swatch{
-  width:35px;height:35px;border-radius:7px;border:2px solid rgba(255,255,255,0.08);
-  cursor:pointer;outline:none;transition:all 0.12s ease;position:relative;flex-shrink:0;
-}
-.bg-swatch:hover{transform:scale(1.15);border-color:rgba(255,255,255,0.35);z-index:1}
-.bg-swatch:active{transform:scale(0.92)}
-
-/* Style toggles */
-.style-btn{
-  display:inline-flex;align-items:center;gap:5px;padding:8px 18px;
-  font-size:0.8rem;font-weight:600;font-family:var(--ui);border-radius:8px;
-  cursor:pointer;user-select:none;outline:none;transition:all 0.12s ease;
-  background:var(--card);border:1.5px solid var(--border);color:var(--muted);
-}
-.style-btn:hover{background:#282845;border-color:#3D3D65;color:var(--text)}
-.style-btn:active{transform:scale(0.96)}
-.style-btn .icon{font-size:0.9rem}
-
-/* Sequence bar */
-.seq-bar{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;min-height:44px;margin-top:8px}
-.seq-blocks{flex:1;display:flex;flex-wrap:wrap;gap:3px;align-items:center;min-height:28px}
-.seq-empty{color:var(--muted);font-size:0.78rem;font-style:italic}
-.seq-dot{width:20px;height:20px;border-radius:4px;flex-shrink:0;transition:transform 0.1s;cursor:pointer}
-.seq-dot:hover{transform:scale(1.25)}
-.seq-actions{display:flex;gap:5px;flex-shrink:0}
-/* Sequence-only color buttons */
-.seq-swatch{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;outline:none;transition:all 0.12s ease;flex-shrink:0}
-.seq-swatch:hover{transform:scale(1.2);border-color:rgba(255,255,255,0.4);z-index:1}
-.seq-swatch:active{transform:scale(0.9)}
-
-/* Presets */
-.presets{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-.preset-btn{font-size:0.7rem;font-weight:600;padding:4px 10px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--ui);transition:all 0.12s ease}
-.preset-btn:hover{background:var(--card);color:var(--text);border-color:var(--accent)}
-
-/* Char counter */
-.char-count{font-size:0.72rem;color:var(--muted);font-weight:500}
-.char-count.warn{color:#FEE75C}
-.char-count.danger{color:#ED4245}
-
-/* SEO */
-.seo{margin-top:48px;padding-top:28px;border-top:1px solid var(--border)}
-.seo h2{font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:14px}
-.seo h3{font-size:0.95rem;font-weight:600;color:var(--text);margin:18px 0 6px}
-.seo p,.seo li{font-size:0.85rem;color:#B0B0C0;line-height:1.7;margin-bottom:8px}
-.seo code{background:#0D0D1A;padding:1px 6px;border-radius:3px;font-family:'SF Mono','Fira Code',monospace;font-size:0.78rem;color:#00E5FF}
-.faq-list{margin:0}
-.faq-list dt{font-weight:700;color:var(--text);font-size:0.88rem;margin:16px 0 4px}
-.faq-list dd{color:#B0B0C0;font-size:0.85rem;line-height:1.7;margin:0 0 8px;padding:0}
-
-.footer{text-align:center;padding:28px 0 0;font-size:0.72rem;color:#4A4A6A}
-.footer a{color:var(--accent);text-decoration:none}
-
-.toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--success);color:#000;padding:10px 28px;border-radius:50px;font-weight:700;font-size:0.9rem;z-index:999;transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);pointer-events:none;box-shadow:0 4px 24px rgba(87,242,135,0.3)}
-.toast.show{transform:translateX(-50%) translateY(0)}
-
-@media(max-width:600px){
-  .container{padding:12px 8px 28px}
-  .header{padding:24px 0 16px}
-  .editor-top{flex-wrap:wrap;gap:8px}
-  .editor{padding:14px 14px;font-size:0.88rem;min-height:90px}
-  .swatch-btn,.bg-swatch{width:30px;height:30px}
-  .seq-swatch{width:24px;height:24px}
-  .seq-bar{flex-wrap:wrap;gap:6px}
-  .presets{flex-wrap:wrap}
-}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
-</style>
+<meta name="twitter:description" content="Create colorful Discord messages instantly. WYSIWYG editor with ANSI fg/bg colors, bold, underline — type, style, copy. 100% free, no limits.">
+<meta name="twitter:image" content="https://discord-color-text-generator-nine.vercel.app/og-image.png">
+<meta name="twitter:image:alt" content="Discord Colored Text Generator — Type in color, copy ANSI markdown, 100% free.">
+<link rel="stylesheet" href="style.css">
+<link rel="preload" href="style.css" as="style">
 </head>
 <body>
 
 <div class="container">
 
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li><a href="/" aria-current="page">Discord Colored Text Generator</a></li>
+    </ol>
+  </nav>
+
   <header class="header">
-    <h1>🎨 Discord Colored Text Generator</h1>
+    <h1><span class="sr-only">Discord Colored Text Generator</span><span aria-hidden="true">🎨 Discord Colored Text Generator</span></h1>
     <p>Type in color. Select text, apply styles. Copy ANSI markdown for Discord.</p>
   </header>
 
@@ -274,23 +163,32 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": "https://discord-color-text-generator-nine.vercel.app/#website",
     "name": "Discord Colored Text Generator",
-    "url": "https://discordcoloredtext.com/",
+    "url": "https://discord-color-text-generator-nine.vercel.app/",
     "description": "Free WYSIWYG tool to generate ANSI colored text for Discord. 8 foreground colors, 8 background colors, bold, underline, rainbow sequences.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://discordcoloredtext.com/?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    "dateModified": "2026-06-19"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://discord-color-text-generator-nine.vercel.app/#org",
+    "name": "Discord Colored Text Generator",
+    "url": "https://discord-color-text-generator-nine.vercel.app/",
+    "description": "Free online tool for generating Discord ANSI colored text messages.",
+    "logo": "https://discord-color-text-generator-nine.vercel.app/og-image.png"
   }
   </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    "@id": "https://discord-color-text-generator-nine.vercel.app/#breadcrumb",
     "itemListElement": [{
       "@type": "ListItem", "position": 1, "name": "Discord Colored Text Generator",
-      "item": "https://discordcoloredtext.com/"
+      "item": "https://discord-color-text-generator-nine.vercel.app/"
     }]
   }
   </script>
@@ -298,18 +196,24 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
+    "@id": "https://discord-color-text-generator-nine.vercel.app/#app",
     "name": "Discord Colored Text Generator",
     "applicationCategory": "WebApplication",
     "operatingSystem": "All",
     "description": "WYSIWYG editor for generating Discord ANSI colored text. Supports 8 foreground colors, 8 background colors, bold, underline, and color sequences with presets.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "browserRequirements": "Requires JavaScript"
+    "browserRequirements": "Requires JavaScript",
+    "image": "https://discord-color-text-generator-nine.vercel.app/og-image.png",
+    "dateModified": "2026-06-19",
+    "mainEntityOfPage": "https://discord-color-text-generator-nine.vercel.app/"
   }
   </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    "@id": "https://discord-color-text-generator-nine.vercel.app/#faq",
+    "mainEntityOfPage": "https://discord-color-text-generator-nine.vercel.app/",
     "mainEntity": [{
       "@type": "Question", "name": "Does ANSI colored text work on Discord mobile?",
       "acceptedAnswer": { "@type": "Answer", "text": "Yes. ANSI-colored messages display on Discord iOS, Android, desktop, and web. All platforms render Discord ANSI colors natively." }
@@ -338,6 +242,8 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
   {
     "@context": "https://schema.org",
     "@type": "HowTo",
+    "@id": "https://discord-color-text-generator-nine.vercel.app/#howto",
+    "mainEntityOfPage": "https://discord-color-text-generator-nine.vercel.app/",
     "name": "Generate Discord Colored Text",
     "description": "Use the free WYSIWYG editor to create ANSI colored messages for Discord in a few simple steps.",
     "step": [
@@ -357,407 +263,6 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
 
 <div class="toast" id="toast">✓ Copied!</div>
 
-<script>
-(function() {
-  'use strict';
-
-  var FG = [
-    { ansi:'30', css:'#80848E', name:'Gray' },
-    { ansi:'31', css:'#ED4245', name:'Red' },
-    { ansi:'32', css:'#57F287', name:'Green' },
-    { ansi:'33', css:'#FEE75C', name:'Yellow' },
-    { ansi:'34', css:'#5865F2', name:'Blue' },
-    { ansi:'35', css:'#EB459E', name:'Magenta' },
-    { ansi:'36', css:'#00E5FF', name:'Cyan' },
-    { ansi:'37', css:'#FFFFFF', name:'White' },
-  ];
-  var BG = [
-    { ansi:'40', css:'#4F545C', name:'Gray' },
-    { ansi:'41', css:'#ED4245', name:'Red' },
-    { ansi:'42', css:'#57F287', name:'Green' },
-    { ansi:'43', css:'#FEE75C', name:'Yellow' },
-    { ansi:'44', css:'#5865F2', name:'Blue' },
-    { ansi:'45', css:'#EB459E', name:'Magenta' },
-    { ansi:'46', css:'#00E5FF', name:'Cyan' },
-    { ansi:'47', css:'#FFFFFF', name:'White' },
-  ];
-  var FG_RGB = [
-    { ansi:'30', r:128,g:132,b:142 },{ ansi:'31', r:237,g:66,b:69 },
-    { ansi:'32', r:87,g:242,b:135 },{ ansi:'33', r:254,g:231,b:92 },
-    { ansi:'34', r:88,g:101,b:242 },{ ansi:'35', r:235,g:69,b:158 },
-    { ansi:'36', r:0,g:229,b:255 },{ ansi:'37', r:255,g:255,b:255 },
-  ];
-  var BG_RGB = [
-    { ansi:'40', r:79,g:84,b:92 },  { ansi:'41', r:237,g:66,b:69 },
-    { ansi:'42', r:87,g:242,b:135 },{ ansi:'43', r:254,g:231,b:92 },
-    { ansi:'44', r:88,g:101,b:242 },{ ansi:'45', r:235,g:69,b:158 },
-    { ansi:'46', r:0,g:229,b:255 },{ ansi:'47', r:255,g:255,b:255 },
-  ];
-
-  var editor    = document.getElementById('editor');
-  var copyBtn   = document.getElementById('copyBtn');
-  var toast     = document.getElementById('toast');
-  var seqBlocks = document.getElementById('seqBlocks');
-  var seqApply  = document.getElementById('seqApply');
-  var seqClear  = document.getElementById('seqClear');
-  var sequence  = [];
-
-  // ── iOS-compatible style helpers (fallback when execCommand is no-op) ──
-  function _hasSelection() {
-    var sel = window.getSelection();
-    return sel && sel.rangeCount && !sel.isCollapsed && sel.getRangeAt(0).toString().trim();
-  }
-  function _editorFocused() {
-    return document.activeElement === editor || editor.contains(document.activeElement);
-  }
-  function _tryExec(cmd, val) {
-    var before = editor.innerHTML;
-    try { document.execCommand(cmd, false, val); } catch(e) {}
-    return editor.innerHTML !== before;
-  }
-  function _restoreRange(range) {
-    var sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-  }
-  function applyForeColor(css) {
-    var sel = window.getSelection();
-    if (!sel.rangeCount) return;
-    var range = sel.getRangeAt(0);
-    if (!range.collapsed && range.toString().trim()) {
-      editor.focus();
-      if (!_tryExec('foreColor', css)) {
-        // iOS fallback
-        var contents = range.extractContents();
-        var font = document.createElement('font');
-        font.setAttribute('color', css);
-        font.appendChild(contents);
-        range.insertNode(font);
-        range.selectNodeContents(font);
-        _restoreRange(range);
-      }
-    } else if (_editorFocused()) {
-      try { document.execCommand('foreColor', false, css); } catch(e) {}
-    }
-    updateCharCount();
-  }
-  function applyBackColor(css) {
-    var sel = window.getSelection();
-    if (!sel.rangeCount) return;
-    var range = sel.getRangeAt(0);
-    if (!range.collapsed && range.toString().trim()) {
-      editor.focus();
-      if (!_tryExec('backColor', css)) {
-        var contents = range.extractContents();
-        var span = document.createElement('span');
-        span.style.backgroundColor = css;
-        span.appendChild(contents);
-        range.insertNode(span);
-        range.selectNodeContents(span);
-        _restoreRange(range);
-      }
-    } else if (_editorFocused()) {
-      try { document.execCommand('backColor', false, css); } catch(e) {}
-    }
-    updateCharCount();
-  }
-  function applyBold() {
-    var sel = window.getSelection();
-    if (!sel.rangeCount) return;
-    var range = sel.getRangeAt(0);
-    if (!range.collapsed && range.toString().trim()) {
-      editor.focus();
-      if (!_tryExec('bold')) {
-        var contents = range.extractContents();
-        // Toggle: check if already inside <b> or <strong>
-        var node = range.commonAncestorContainer;
-        if (node.nodeType === 3) node = node.parentNode;
-        var isBold = node && node.closest && (node.closest('b') || node.closest('strong'));
-        if (isBold) {
-          range.insertNode(contents);
-        } else {
-          var b = document.createElement('b');
-          b.appendChild(contents);
-          range.insertNode(b);
-          range.selectNodeContents(b);
-        }
-        _restoreRange(range);
-      }
-    } else if (_editorFocused()) {
-      try { document.execCommand('bold'); } catch(e) {}
-    }
-    updateCharCount();
-  }
-  function applyUnderline() {
-    var sel = window.getSelection();
-    if (!sel.rangeCount) return;
-    var range = sel.getRangeAt(0);
-    if (!range.collapsed && range.toString().trim()) {
-      editor.focus();
-      if (!_tryExec('underline')) {
-        var contents = range.extractContents();
-        var u = document.createElement('u');
-        u.appendChild(contents);
-        range.insertNode(u);
-        range.selectNodeContents(u);
-        _restoreRange(range);
-      }
-    } else if (_editorFocused()) {
-      try { document.execCommand('underline'); } catch(e) {}
-    }
-    updateCharCount();
-  }
-  function applyRemoveFormat() {
-    var sel = window.getSelection();
-    if (!sel.rangeCount) return;
-    var range = sel.getRangeAt(0);
-    if (!range.collapsed && range.toString().trim()) {
-      editor.focus();
-      if (!_tryExec('removeFormat')) {
-        var text = range.toString();
-        range.deleteContents();
-        range.insertNode(document.createTextNode(text));
-        range.collapse(false);
-        _restoreRange(range);
-      }
-    } else if (_editorFocused()) {
-      try { document.execCommand('removeFormat'); } catch(e) {}
-    }
-    updateCharCount();
-  }
-
-  // Presets
-  var PRESETS = {
-    rainbow: [FG[1],FG[3],FG[2],FG[6],FG[4],FG[5]],   // Red,Yellow,Green,Cyan,Blue,Magenta
-    sunset:  [FG[1],FG[3],FG[5],FG[1]],                 // Red,Yellow,Magenta,Red
-    ocean:   [FG[6],FG[4],FG[0],FG[6]],                 // Cyan,Blue,Gray,Cyan
-    fire:    [FG[1],FG[3],FG[1],FG[3],FG[5]],           // Red,Yellow,Red,Yellow,Magenta
-  };
-  document.querySelectorAll('.preset-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var key = this.dataset.preset;
-      if (PRESETS[key]) { sequence = PRESETS[key].slice(); updateSeqUI(); }
-    });
-  });
-
-  // Character counter
-  var charCount = document.getElementById('charCount');
-  function updateCharCount() {
-    var ansi = domToANSI(editor);
-    var len = ansi ? ansi.length : 0;
-    var max = 2000;
-    charCount.textContent = len + ' / ' + max;
-    charCount.className = 'char-count' + (len > max ? ' danger' : len > max * 0.9 ? ' warn' : '');
-  }
-  editor.addEventListener('input', updateCharCount);
-
-  function updateSeqUI() {
-    seqBlocks.innerHTML = sequence.length
-      ? sequence.map(function(s,i) {
-          return '<span class="seq-dot" title="'+s.name+' ('+(i+1)+')" style="background:'+s.css+'" data-idx="'+i+'"></span>';
-        }).join('')
-      : '<span class="seq-empty">Click color swatches above to build a sequence…</span>';
-    seqApply.disabled = sequence.length === 0;
-    seqClear.disabled = sequence.length === 0;
-    // Click dot to remove from sequence
-    seqBlocks.querySelectorAll('.seq-dot').forEach(function(d) {
-      d.addEventListener('click', function() {
-        sequence.splice(parseInt(this.dataset.idx), 1);
-        updateSeqUI();
-      });
-    });
-  }
-
-  function addToSeq(c) {
-    sequence.push(c);
-    updateSeqUI();
-  }
-
-  function applySequence() {
-    var sel = window.getSelection();
-    if (!sel.rangeCount || sel.isCollapsed || !sequence.length) return;
-    var range = sel.getRangeAt(0);
-    var text = range.toString();
-    if (!text) return;
-    range.deleteContents();
-    var frag = document.createDocumentFragment();
-    for (var i = 0; i < text.length; i++) {
-      var s = sequence[i % sequence.length];
-      var el = document.createElement('font');
-      el.setAttribute('color', s.css);
-      el.textContent = text[i];
-      frag.appendChild(el);
-    }
-    range.insertNode(frag);
-    range.collapse(false);
-    sel.removeAllRanges();
-    sel.addRange(range);
-    updateCharCount();
-  }
-
-  // FG: colored circles — apply directly, don't touch sequence
-  FG.forEach(function(c) {
-    var b = document.createElement('button');
-    b.className = 'swatch-btn';
-    b.title = c.name;
-    b.style.background = c.css;
-    if (c.ansi === '37' || c.ansi === '33') b.style.borderColor = 'rgba(255,255,255,0.15)';
-    b.addEventListener('pointerdown', function(e) {
-      e.preventDefault();
-      applyForeColor(c.css);
-    });
-    document.getElementById('fgRow').appendChild(b);
-  });
-
-  // BG: rounded squares — first one clears background
-  (function() {
-    var b = document.createElement('button');
-    b.className = 'bg-swatch';
-    b.title = 'No background';
-    b.style.background = 'transparent';
-    b.style.borderStyle = 'dashed';
-    b.addEventListener('pointerdown', function(e) {
-      e.preventDefault();
-      applyBackColor('transparent');
-    });
-    document.getElementById('bgRow').appendChild(b);
-  })();
-  BG.forEach(function(c) {
-    var b = document.createElement('button');
-    b.className = 'bg-swatch';
-    b.title = c.name;
-    b.style.background = c.css;
-    b.addEventListener('pointerdown', function(e) {
-      e.preventDefault();
-      applyBackColor(c.css);
-    });
-    document.getElementById('bgRow').appendChild(b);
-  });
-
-  // Sequence-only color buttons (foreground only)
-  FG.forEach(function(c) {
-    var b = document.createElement('button');
-    b.className = 'seq-swatch';
-    b.title = 'Add ' + c.name + ' to sequence';
-    b.style.background = c.css;
-    if (c.ansi === '37' || c.ansi === '33') b.style.borderColor = 'rgba(255,255,255,0.3)';
-    b.addEventListener('click', function() { addToSeq(c); });
-    document.getElementById('seqColors').appendChild(b);
-  });
-
-  // Sequence actions (pointerdown keeps selection alive on touch)
-  seqApply.addEventListener('pointerdown', function(e) {
-    e.preventDefault();
-    applySequence();
-  });
-  seqClear.addEventListener('click', function() {
-    sequence = [];
-    updateSeqUI();
-  });
-
-  // Style
-  document.getElementById('boldBtn').addEventListener('pointerdown', function(e) {
-    e.preventDefault(); applyBold();
-  });
-  document.getElementById('underlineBtn').addEventListener('pointerdown', function(e) {
-    e.preventDefault(); applyUnderline();
-  });
-
-  // Reset: strip formatting
-  document.getElementById('resetBtn').addEventListener('pointerdown', function(e) {
-    e.preventDefault(); applyRemoveFormat();
-  });
-  // Clear
-  document.getElementById('clearBtn').addEventListener('click', function() {
-    editor.innerHTML = ''; editor.focus(); updateCharCount();
-  });
-
-  // DOM → ANSI
-  function parseRGB(s) {
-    var m = s.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-    return m ? { r:parseInt(m[1]), g:parseInt(m[2]), b:parseInt(m[3]), a:m[4]!==undefined?parseFloat(m[4]):1 } : null;
-  }
-  function closest(r,g,b,t) {
-    var best=t[0], bestD=Infinity;
-    for (var i=0;i<t.length;i++) {
-      var dr=r-t[i].r, dg=g-t[i].g, db=b-t[i].b, d=dr*dr+dg*dg+db*db;
-      if (d<bestD) { bestD=d; best=t[i]; }
-    }
-    return best.ansi;
-  }
-
-  function domToANSI(root) {
-    var lines=[], cur='', lastPrefix='';
-    (function walk(node,st) {
-      if (node.nodeType===3) {
-        var parts=node.textContent.split('\n');
-        for (var i=0;i<parts.length;i++) {
-          if (i>0) { lines.push(cur); cur=''; lastPrefix=''; }
-          if (!parts[i]) continue;
-          var p=[];
-          if (st.bold) p.push('1');
-          if (st.underline) p.push('4');
-          p.push(st.fg);
-          if (st.bg) p.push(st.bg);
-          var prefix='['+p.join(';')+'m';
-          if (prefix===lastPrefix) { cur+=parts[i]; }
-          else { cur+=prefix+parts[i]; lastPrefix=prefix; }
-        }
-        return;
-      }
-      if (node.nodeType!==1) return;
-      var tag=node.tagName.toLowerCase();
-      var ns={ fg:st.fg, bg:st.bg, bold:st.bold, underline:st.underline };
-      if (/^(font|span|b|u|strong|em)$/.test(tag)) {
-        var cs=getComputedStyle(node);
-        var fgR=parseRGB(cs.color);
-        if (fgR) ns.fg=closest(fgR.r,fgR.g,fgR.b,FG_RGB);
-        if (cs.fontWeight==='bold'||parseInt(cs.fontWeight)>=700) ns.bold=true;
-        if (cs.textDecoration.indexOf('underline')!==-1) ns.underline=true;
-        if (node.style&&node.style.backgroundColor&&node.style.backgroundColor!==''&&node.style.backgroundColor!=='transparent') {
-          var bgR=parseRGB(cs.backgroundColor);
-          if (bgR&&bgR.a>0) ns.bg=closest(bgR.r,bgR.g,bgR.b,BG_RGB);
-        }
-      }
-      if (tag==='b'||tag==='strong') ns.bold=true;
-      if (tag==='u') ns.underline=true;
-      for (var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i],ns);
-    })(root,{ fg:'37', bg:null, bold:false, underline:false });
-    if (cur||lines.length===0) lines.push(cur);
-    return lines.join('\n');
-  }
-
-  function copy() {
-    if (!editor.textContent.trim()) return;
-    var ansi=domToANSI(editor);
-    if (!ansi) return;
-    var md='```ansi\n'+ansi+'\n```';
-    if (navigator.clipboard&&navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(md).then(flash).catch(fc);
-    } else fc();
-    function fc() {
-      var ta=document.createElement('textarea');
-      ta.value=md; ta.style.position='fixed'; ta.style.left='-9999px';
-      document.body.appendChild(ta); ta.focus(); ta.select();
-      try { document.execCommand('copy'); flash(); } catch(e) {}
-      document.body.removeChild(ta);
-    }
-  }
-
-  function flash() {
-    copyBtn.classList.add('copied');
-    copyBtn.innerHTML='<span>✓</span> Copied!';
-    toast.classList.add('show');
-    setTimeout(function() {
-      copyBtn.classList.remove('copied');
-      copyBtn.innerHTML='📋 Copy ANSI';
-      toast.classList.remove('show');
-    },2000);
-  }
-
-  copyBtn.addEventListener('click', copy);
-  editor.focus();
-})();
-</script>
+<script src="script.js" defer></script>
 </body>
 </html>
