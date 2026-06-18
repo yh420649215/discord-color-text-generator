@@ -407,6 +407,9 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
     var sel = window.getSelection();
     return sel && sel.rangeCount && !sel.isCollapsed && sel.getRangeAt(0).toString().trim();
   }
+  function _editorFocused() {
+    return document.activeElement === editor || editor.contains(document.activeElement);
+  }
   function _tryExec(cmd, val) {
     var before = editor.innerHTML;
     try { document.execCommand(cmd, false, val); } catch(e) {}
@@ -418,11 +421,11 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
     sel.addRange(range);
   }
   function applyForeColor(css) {
-    editor.focus();
     var sel = window.getSelection();
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
+      editor.focus();
       if (!_tryExec('foreColor', css)) {
         // iOS fallback
         var contents = range.extractContents();
@@ -433,17 +436,17 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
         range.selectNodeContents(font);
         _restoreRange(range);
       }
-    } else {
+    } else if (_editorFocused()) {
       try { document.execCommand('foreColor', false, css); } catch(e) {}
     }
     updateCharCount();
   }
   function applyBackColor(css) {
-    editor.focus();
     var sel = window.getSelection();
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
+      editor.focus();
       if (!_tryExec('backColor', css)) {
         var contents = range.extractContents();
         var span = document.createElement('span');
@@ -453,17 +456,17 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
         range.selectNodeContents(span);
         _restoreRange(range);
       }
-    } else {
+    } else if (_editorFocused()) {
       try { document.execCommand('backColor', false, css); } catch(e) {}
     }
     updateCharCount();
   }
   function applyBold() {
-    editor.focus();
     var sel = window.getSelection();
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
+      editor.focus();
       if (!_tryExec('bold')) {
         var contents = range.extractContents();
         // Toggle: check if already inside <b> or <strong>
@@ -480,17 +483,17 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
         }
         _restoreRange(range);
       }
-    } else {
+    } else if (_editorFocused()) {
       try { document.execCommand('bold'); } catch(e) {}
     }
     updateCharCount();
   }
   function applyUnderline() {
-    editor.focus();
     var sel = window.getSelection();
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
+      editor.focus();
       if (!_tryExec('underline')) {
         var contents = range.extractContents();
         var u = document.createElement('u');
@@ -499,7 +502,7 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
         range.selectNodeContents(u);
         _restoreRange(range);
       }
-    } else {
+    } else if (_editorFocused()) {
       try { document.execCommand('underline'); } catch(e) {}
     }
     updateCharCount();
@@ -509,6 +512,7 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
     if (!sel.rangeCount) return;
     var range = sel.getRangeAt(0);
     if (!range.collapsed && range.toString().trim()) {
+      editor.focus();
       if (!_tryExec('removeFormat')) {
         var text = range.toString();
         range.deleteContents();
@@ -516,7 +520,7 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
         range.collapse(false);
         _restoreRange(range);
       }
-    } else {
+    } else if (_editorFocused()) {
       try { document.execCommand('removeFormat'); } catch(e) {}
     }
     updateCharCount();
