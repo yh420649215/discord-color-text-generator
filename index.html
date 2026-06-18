@@ -45,10 +45,10 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
 .ad{background:var(--card);border:1px dashed var(--border);border-radius:12px;min-height:90px;display:flex;align-items:center;justify-content:center;color:#4A4A6A;font-size:0.75rem;margin:12px 0;text-transform:uppercase;letter-spacing:0.1em}
 
 /* Editor */
-.editor-section{margin:28px 0}
+.editor-section{margin:8px 0 28px}
 .editor-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .editor-top label{font-weight:700;font-size:0.88rem;color:var(--text);letter-spacing:-0.01em}
-.editor-actions{display:flex;gap:6px}
+.editor-actions{display:flex;gap:6px;margin-top:10px;justify-content:flex-end}
 .btn{display:inline-flex;align-items:center;gap:4px;padding:7px 15px;font-size:0.78rem;font-weight:600;font-family:var(--ui);border:none;border-radius:8px;cursor:pointer;transition:all 0.15s ease}
 .btn-fill{background:var(--accent);color:#fff}
 .btn-fill:hover{background:var(--accent-hover);box-shadow:0 2px 12px var(--glow)}
@@ -70,7 +70,7 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
 .editor-wrap .char-count{position:absolute;bottom:8px;right:14px;z-index:1;pointer-events:none}
 
 /* Picker */
-.picker{display:flex;flex-direction:column;gap:18px;margin:28px 0}
+.picker{display:flex;flex-direction:column;gap:18px;margin:24px 0 8px}
 .picker-label{font-size:0.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px}
 .picker-row{display:flex;flex-wrap:wrap;gap:6px}
 
@@ -163,24 +163,6 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
 
   <!-- <div class="ad">GOOGLE ADSENSE TOP AD</div> -->
 
-  <!-- Editor -->
-  <div class="editor-section">
-    <div class="editor-top">
-      <label for="editor">✏️ Your Message</label>
-      <div class="editor-actions">
-        <button class="btn btn-hollow" id="resetBtn" aria-label="Remove formatting from selected text">↺ Reset Style</button>
-        <button class="btn btn-hollow danger" id="clearBtn" aria-label="Clear all text">✕ Clear All</button>
-        <button class="btn btn-fill" id="copyBtn" aria-label="Copy ANSI markdown to clipboard">📋 Copy ANSI</button>
-      </div>
-    </div>
-    <div class="editor-wrap">
-      <div class="editor" id="editor" contenteditable="true"
-      data-placeholder="Type here… your text appears in color as you type"
-      role="textbox" aria-multiline="true" aria-label="Message editor — type in color directly"></div>
-      <span class="char-count" id="charCount" title="ANSI character count / Discord 2000 limit"></span>
-    </div>
-  </div>
-
   <!-- Picker -->
   <div class="picker">
     <div>
@@ -214,6 +196,24 @@ body{font-family:var(--ui);background:var(--bg);color:#E0E0E0;min-height:100vh;l
           <button class="btn btn-hollow" id="seqClear" disabled>Clear</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Editor -->
+  <div class="editor-section">
+    <div class="editor-top">
+      <label for="editor">✏️ Your Message</label>
+    </div>
+    <div class="editor-wrap">
+      <div class="editor" id="editor" contenteditable="true"
+      data-placeholder="Type here… your text appears in color as you type"
+      role="textbox" aria-multiline="true" aria-label="Message editor — type in color directly"></div>
+      <span class="char-count" id="charCount" title="ANSI character count / Discord 2000 limit"></span>
+    </div>
+    <div class="editor-actions">
+      <button class="btn btn-hollow" id="resetBtn" aria-label="Remove formatting from selected text">↺ Reset Style</button>
+      <button class="btn btn-hollow danger" id="clearBtn" aria-label="Clear all text">✕ Clear All</button>
+      <button class="btn btn-fill" id="copyBtn" aria-label="Copy ANSI markdown to clipboard">📋 Copy ANSI</button>
     </div>
   </div>
 
