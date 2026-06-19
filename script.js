@@ -42,17 +42,13 @@
   var seqClear  = document.getElementById('seqClear');
   var sequence  = [];
 
-  // Pending styles — applied on next keystroke to avoid re-focusing editor on mobile
+  // Pending styles — applied on next input to avoid re-focusing editor on mobile
   var pendingFg = null;
   var pendingBg = null;
   var pendingBold = null;       // true=apply, false=remove
   var pendingUnderline = null;  // true=apply, false=remove
 
   // ── iOS-compatible style helpers (fallback when execCommand is no-op) ──
-  function _hasSelection() {
-    var sel = window.getSelection();
-    return sel && sel.rangeCount && !sel.isCollapsed && sel.getRangeAt(0).toString().trim();
-  }
   function _editorFocused() {
     return document.activeElement === editor || editor.contains(document.activeElement);
   }
@@ -74,6 +70,49 @@
       window.scrollTo(x, y);
     }
   }
+  // Strip inline formatting wrappers (font, span, b, u, strong, em) from a fragment,
+  // preserving structural elements like <br>, <div>, <p> and text content.
+  function _stripFormatting(frag) {
+    var wrappers = [];
+    function collect(node) {
+      for (var i = 0; i < node.childNodes.length; i++) {
+        collect(node.childNodes[i]);
+      }
+      if (node.nodeType === 1) {
+        var tag = node.tagName.toLowerCase();
+        if (/^(font|span|b|u|strong|em)$/.test(tag)) {
+          wrappers.push(node);
+        }
+      }
+    }
+    collect(frag);
+    // Unwrap leaf-first: children were pushed before parents
+    for (var j = 0; j < wrappers.length; j++) {
+      var el = wrappers[j];
+      if (el.parentNode) {
+        while (el.firstChild) {
+          el.parentNode.insertBefore(el.firstChild, el);
+        }
+        el.parentNode.removeChild(el);
+      }
+    }
+  }
+  // Strip inline background-color styles from all elements in a fragment
+  function _stripBackgrounds(frag) {
+    if (!frag.querySelectorAll) return;
+    var els = frag.querySelectorAll('[style]');
+    for (var i = 0; i < els.length; i++) {
+      els[i].style.backgroundColor = '';
+    }
+    // Also handle root fragment children
+    for (var j = 0; j < frag.childNodes.length; j++) {
+      var child = frag.childNodes[j];
+      if (child.nodeType === 1 && child.style && child.style.backgroundColor) {
+        child.style.backgroundColor = '';
+      }
+    }
+  }
+
   function applyForeColor(css) {
     var sel = window.getSelection();
     if (!sel.rangeCount) return;
@@ -81,7 +120,6 @@
     if (!range.collapsed && range.toString().trim()) {
       _safeFocus();
       if (!_tryExec('foreColor', css)) {
-        // iOS fallback
         var contents = range.extractContents();
         var font = document.createElement('font');
         font.setAttribute('color', css);
@@ -103,11 +141,17 @@
       _safeFocus();
       if (!_tryExec('backColor', css)) {
         var contents = range.extractContents();
-        var span = document.createElement('span');
-        span.style.backgroundColor = css;
-        span.appendChild(contents);
-        range.insertNode(span);
-        range.selectNodeContents(span);
+        if (css === 'transparent') {
+          // Strip existing background styles instead of wrapping
+          _stripBackgrounds(contents);
+          range.insertNode(contents);
+        } else {
+          var span = document.createElement('span');
+          span.style.backgroundColor = css;
+          span.appendChild(contents);
+          range.insertNode(span);
+          range.selectNodeContents(span);
+        }
         _restoreRange(range);
       }
     } else if (_editorFocused()) {
@@ -123,12 +167,23 @@
       _safeFocus();
       if (!_tryExec('bold')) {
         var contents = range.extractContents();
-        // Toggle: check if already inside <b> or <strong>
-        var node = range.commonAncestorContainer;
-        if (node.nodeType === 3) node = node.parentNode;
-        var isBold = node && node.closest && (node.closest('b') || node.closest('strong'));
+        // Toggle: check if start AND end of selection are inside <b> or <strong>
+        var sc = range.startContainer;
+        if (sc.nodeType === 3) sc = sc.parentNode;
+        var ec = range.endContainer;
+        if (ec.nodeType === 3) ec = ec.parentNode;
+        var boldStart = sc && sc.closest && (sc.closest('b') || sc.closest('strong'));
+        var boldEnd   = ec && ec.closest && (ec.closest('b') || ec.closest('strong'));
+        var isBold = boldStart && boldEnd;
         if (isBold) {
+          // Unwrap: insert contents outside the bold wrapper
+          var boldEl = boldStart; // use the start container's bold wrapper
+          if (boldEl.parentNode) {
+            range.setStartAfter(boldEl);
+            range.collapse(true);
+          }
           range.insertNode(contents);
+          range.selectNodeContents(contents);
         } else {
           var b = document.createElement('b');
           b.appendChild(contents);
@@ -150,10 +205,29 @@
       _safeFocus();
       if (!_tryExec('underline')) {
         var contents = range.extractContents();
-        var u = document.createElement('u');
-        u.appendChild(contents);
-        range.insertNode(u);
-        range.selectNodeContents(u);
+        // Toggle: check if start AND end of selection are inside <u>
+        var sc = range.startContainer;
+        if (sc.nodeType === 3) sc = sc.parentNode;
+        var ec = range.endContainer;
+        if (ec.nodeType === 3) ec = ec.parentNode;
+        var ulStart = sc && sc.closest && sc.closest('u');
+        var ulEnd   = ec && ec.closest && ec.closest('u');
+        var isUnderlined = ulStart && ulEnd;
+        if (isUnderlined) {
+          // Unwrap: insert contents outside the <u> wrapper
+          var uEl = ulStart;
+          if (uEl.parentNode) {
+            range.setStartAfter(uEl);
+            range.collapse(true);
+          }
+          range.insertNode(contents);
+          range.selectNodeContents(contents);
+        } else {
+          var u = document.createElement('u');
+          u.appendChild(contents);
+          range.insertNode(u);
+          range.selectNodeContents(u);
+        }
         _restoreRange(range);
       }
     } else if (_editorFocused()) {
@@ -168,10 +242,9 @@
     if (!range.collapsed && range.toString().trim()) {
       _safeFocus();
       if (!_tryExec('removeFormat')) {
-        var text = range.toString();
-        range.deleteContents();
-        range.insertNode(document.createTextNode(text));
-        range.collapse(false);
+        var frag = range.extractContents();
+        _stripFormatting(frag);
+        range.insertNode(frag);
         _restoreRange(range);
       }
     } else if (_editorFocused()) {
@@ -179,6 +252,8 @@
       pendingBg = null;
       pendingBold = null;
       pendingUnderline = null;
+      // Also clear browser's internal typing-style formatting state
+      try { document.execCommand('removeFormat'); } catch(e) {}
     }
     updateCharCount();
   }
@@ -208,8 +283,8 @@
   }
   editor.addEventListener('input', updateCharCount);
 
-  // Apply pending styles on next keystroke (avoids re-focusing editor on mobile)
-  editor.addEventListener('keydown', function() {
+  // Apply pending styles on next input (handles typing, IME, voice, paste)
+  function _flushPending() {
     if (pendingFg) {
       try { document.execCommand('foreColor', false, pendingFg); } catch(e) {}
       pendingFg = null;
@@ -219,14 +294,24 @@
       pendingBg = null;
     }
     if (pendingBold !== null) {
-      try { document.execCommand('bold'); } catch(e) {}
+      // Use queryCommandState to avoid toggling when already in desired state
+      var isBold = document.queryCommandState('bold');
+      if (isBold !== pendingBold) {
+        try { document.execCommand('bold'); } catch(e) {}
+      }
       pendingBold = null;
     }
     if (pendingUnderline !== null) {
-      try { document.execCommand('underline'); } catch(e) {}
+      var isUnder = document.queryCommandState('underline');
+      if (isUnder !== pendingUnderline) {
+        try { document.execCommand('underline'); } catch(e) {}
+      }
       pendingUnderline = null;
     }
-  });
+  }
+  editor.addEventListener('keydown', _flushPending);
+  // Also flush on input for non-keyboard methods: IME composition, voice dictation, paste
+  editor.addEventListener('input', _flushPending);
 
   function updateSeqUI() {
     seqBlocks.innerHTML = sequence.length
@@ -239,7 +324,7 @@
     // Click dot to remove from sequence
     seqBlocks.querySelectorAll('.seq-dot').forEach(function(d) {
       d.addEventListener('click', function() {
-        sequence.splice(parseInt(this.dataset.idx), 1);
+        sequence.splice(parseInt(this.dataset.idx, 10), 1);
         updateSeqUI();
       });
     });
@@ -254,18 +339,33 @@
     var sel = window.getSelection();
     if (!sel.rangeCount || sel.isCollapsed || !sequence.length) return;
     var range = sel.getRangeAt(0);
-    var text = range.toString();
-    if (!text) return;
-    range.deleteContents();
-    var frag = document.createDocumentFragment();
-    for (var i = 0; i < text.length; i++) {
-      var s = sequence[i % sequence.length];
-      var el = document.createElement('font');
-      el.setAttribute('color', s.css);
-      el.textContent = text[i];
-      frag.appendChild(el);
+    if (!range.toString()) return;
+    _safeFocus();
+    // Extract contents to preserve DOM structure (bold, underline wrappers)
+    var extracted = range.extractContents();
+    // Walk tree, collect text nodes, then replace each with per-character font elements
+    var charIdx = 0;
+    var walker = document.createTreeWalker(extracted, NodeFilter.SHOW_TEXT);
+    var textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+    for (var t = 0; t < textNodes.length; t++) {
+      var textNode = textNodes[t];
+      var parent = textNode.parentNode;
+      var txt = textNode.textContent;
+      if (!txt) continue;
+      for (var i = 0; i < txt.length; i++) {
+        var s = sequence[charIdx % sequence.length];
+        charIdx++;
+        var el = document.createElement('font');
+        el.setAttribute('color', s.css);
+        el.textContent = txt[i];
+        // Insert colored character before the original text node;
+        // existing structural wrappers (b, u) remain intact around these font elements
+        parent.insertBefore(el, textNode);
+      }
+      parent.removeChild(textNode);
     }
-    range.insertNode(frag);
+    range.insertNode(extracted);
     range.collapse(false);
     sel.removeAllRanges();
     sel.addRange(range);
@@ -371,7 +471,7 @@
         for (var i=0;i<parts.length;i++) {
           if (i>0) { lines.push(cur); cur=''; lastPrefix=''; }
           if (!parts[i]) continue;
-          var p=[];
+          var p=['0'];  // Always start with reset to prevent color bleed in Discord
           if (st.bold) p.push('1');
           if (st.underline) p.push('4');
           p.push(st.fg);
@@ -384,6 +484,10 @@
       }
       if (node.nodeType!==1) return;
       var tag=node.tagName.toLowerCase();
+      // Inject newline for block-level elements and <br>
+      if (tag==='br'||tag==='div'||tag==='p') {
+        lines.push(cur); cur=''; lastPrefix='';
+      }
       var ns={ fg:st.fg, bg:st.bg, bold:st.bold, underline:st.underline };
       if (/^(font|span|b|u|strong|em)$/.test(tag)) {
         var cs=getComputedStyle(node);
@@ -391,14 +495,23 @@
         if (fgR) ns.fg=closest(fgR.r,fgR.g,fgR.b,FG_RGB);
         if (cs.fontWeight==='bold'||parseInt(cs.fontWeight)>=700) ns.bold=true;
         if (cs.textDecoration.indexOf('underline')!==-1) ns.underline=true;
-        if (node.style&&node.style.backgroundColor&&node.style.backgroundColor!==''&&node.style.backgroundColor!=='transparent') {
-          var bgR=parseRGB(cs.backgroundColor);
-          if (bgR&&bgR.a>0) ns.bg=closest(bgR.r,bgR.g,bgR.b,BG_RGB);
+        // Use computed style for background detection — handles inline style,
+        // CSS class, and transparent correctly
+        var bgR=parseRGB(cs.backgroundColor);
+        if (bgR&&bgR.a>0) {
+          ns.bg=closest(bgR.r,bgR.g,bgR.b,BG_RGB);
+        } else if (node.style&&node.style.backgroundColor==='transparent') {
+          // Explicit transparent: clear inherited background
+          ns.bg=null;
         }
       }
       if (tag==='b'||tag==='strong') ns.bold=true;
       if (tag==='u') ns.underline=true;
       for (var i=0;i<node.childNodes.length;i++) walk(node.childNodes[i],ns);
+      // After block-level elements, push another line break
+      if (tag==='div'||tag==='p') {
+        lines.push(cur); cur=''; lastPrefix='';
+      }
     })(root,{ fg:'37', bg:null, bold:false, underline:false });
     if (cur||lines.length===0) lines.push(cur);
     return lines.join('\n');
@@ -416,7 +529,10 @@
       var ta=document.createElement('textarea');
       ta.value=md; ta.style.position='fixed'; ta.style.left='-9999px';
       document.body.appendChild(ta); ta.focus(); ta.select();
-      try { document.execCommand('copy'); flash(); } catch(e) {}
+      try {
+        var ok=document.execCommand('copy');
+        if (ok) flash();
+      } catch(e) {}
       document.body.removeChild(ta);
     }
   }
